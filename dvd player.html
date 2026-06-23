@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DVD Screensaver</title>
+
+  <style>
+    /* Reset default spacing */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Full-screen black background */
+    body {
+      background-color: black;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* The DVD logo box */
+    #dvd-logo {
+      position: absolute;
+      font-family: Arial, sans-serif;
+      font-size: 60px;
+      font-weight: bold;
+      letter-spacing: 4px;
+      color: white;
+      user-select: none;
+      line-height: 1;
+    }
+
+    /* Small "VIDEO" text below "DVD" */
+    #dvd-logo span {
+      display: block;
+      font-size: 14px;
+      letter-spacing: 8px;
+      text-align: center;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- The DVD logo element -->
+  <div id="dvd-logo">
+    DVD
+    <span>VIDEO</span>
+  </div>
+
+  <script>
+    // --- Get the logo element ---
+    var logo = document.getElementById("dvd-logo");
+
+    // --- Starting position ---
+    var x = 100;
+    var y = 100;
+
+    // --- Speed (pixels per frame) ---
+    var speedX = 2;
+    var speedY = 2;
+
+    // --- Bright colors to randomly pick from ---
+    var colors = [
+      "#FF4444",
+      "#44FF44",
+      "#4488FF",
+      "#FFFF44",
+      "#FF44FF",
+      "#44FFFF",
+      "#FF8800",
+      "#AA44FF"
+    ];
+
+    // --- Pick a random color ---
+    function getRandomColor() {
+      var index = Math.floor(Math.random() * colors.length);
+      return colors[index];
+    }
+
+    // --- Apply a new color to the logo ---
+    function changeColor() {
+      logo.style.color = getRandomColor();
+    }
+
+    // --- Main animation loop ---
+    function animate() {
+
+      var screenWidth  = window.innerWidth;
+      var screenHeight = window.innerHeight;
+      var logoWidth    = logo.offsetWidth;
+      var logoHeight   = logo.offsetHeight;
+
+      // Move the logo
+      x += speedX;
+      y += speedY;
+
+      // Bounce off right wall
+      if (x + logoWidth >= screenWidth) {
+        x = screenWidth - logoWidth;
+        speedX = -speedX;
+        changeColor();
+      }
+
+      // Bounce off left wall
+      if (x <= 0) {
+        x = 0;
+        speedX = -speedX;
+        changeColor();
+      }
+
+      // Bounce off bottom wall
+      if (y + logoHeight >= screenHeight) {
+        y = screenHeight - logoHeight;
+        speedY = -speedY;
+        changeColor();
+      }
+
+      // Bounce off top wall
+      if (y <= 0) {
+        y = 0;
+        speedY = -speedY;
+        changeColor();
+      }
+
+      // Apply position
+      logo.style.left = x + "px";
+      logo.style.top  = y + "px";
+
+      // Loop
+      requestAnimationFrame(animate);
+    }
+
+    // --- Start ---
+    changeColor();
+    animate();
+
+    // --- Keep logo inside screen on resize ---
+    window.addEventListener("resize", function () {
+      var screenWidth  = window.innerWidth;
+      var screenHeight = window.innerHeight;
+      var logoWidth    = logo.offsetWidth;
+      var logoHeight   = logo.offsetHeight;
+
+      if (x + logoWidth  > screenWidth)  x = screenWidth  - logoWidth;
+      if (y + logoHeight > screenHeight) y = screenHeight - logoHeight;
+      if (x < 0) x = 0;
+      if (y < 0) y = 0;
+    });
+  </script>
+
+</body>
+</html>
